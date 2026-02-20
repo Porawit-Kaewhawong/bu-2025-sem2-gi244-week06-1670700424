@@ -1,3 +1,5 @@
+using JetBrains.Annotations;
+using Unity.Hierarchy;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,6 +11,7 @@ public class PlayerControllerExam03 : MonoBehaviour
 
     public bool enableAutoFireMode;
     public float autoFireInterval = 0.1f;
+    private float timer;
 
     private float horizontalInput;
     private InputAction moveAction;
@@ -35,9 +38,24 @@ public class PlayerControllerExam03 : MonoBehaviour
             transform.position = new Vector3(xRange, transform.position.y, transform.position.z);
         }
 
+        // Manual shooting
         if (shootAction.triggered)
         {
-            Instantiate(projectilePrefab, transform.position, transform.rotation);
+            if (!enableAutoFireMode)
+            {
+                Instantiate(projectilePrefab, transform.position, transform.rotation);
+            }
+        }
+
+        // Auto shooting
+        if (enableAutoFireMode)
+        {
+            float countdown = Time.time;
+            if (countdown >= timer)
+            {
+                Instantiate(projectilePrefab, transform.position, transform.rotation);
+                timer += autoFireInterval;
+            }
         }
     }
 }
